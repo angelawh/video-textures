@@ -19,3 +19,4 @@ function equalize_brightness(name)
         output = imhistmatch(im_new, im_orig);
         imwrite(output, fullname);
     end
+end

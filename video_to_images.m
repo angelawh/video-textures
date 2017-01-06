@@ -26,3 +26,4 @@ function video_to_images(name)
        imwrite(img,fullname)    % Write out to a JPEG file (img1.jpg, img2.jpg, etc.)
        ii = ii+1;
     end
+end
