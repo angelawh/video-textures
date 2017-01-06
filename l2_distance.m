@@ -43,15 +43,16 @@ function [D, D_prime, D_prime_prime] = l2_distance(name, m_weight, p, alpha)
     end
     
     % Subsequence matching to preserve dynamics
-    w = pascal(m_weight);
+    pasc = pascal(m_weight);
+    w = zeros(1, m_weight);
     for i=1:m_weight
         for j = 1:m_weight
-            if i + j ~= m_weight + 1
-                w(i,j) = 0;
+            if i + j == m_weight + 1
+                w(i) = pasc(i,j);
             end
         end
     end
-    w = w./ sumabs(w);
+    w = w./ sum(w);
     
     %D_prime = D * w; something like this
 
