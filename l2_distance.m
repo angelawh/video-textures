@@ -26,16 +26,23 @@ function [D, D_prime, D_prime_prime] = l2_distance(name, m_weight, p, alpha)
     for i = 1:num
         im1 = imread(fullfile(curDir, [sprintf('%03d', i) '.jpg']));
         im1 = rgb2gray(im1);
-        hist1 = imhist(im1);
+        hist1 = imhist(im1)./numel(im1);
         for j = i:num
-            im2 = imread(fullfile(curDir, [sprintf('%03d',j ) '.jpg']));
-            im2 = rgb2gray(im2);
-            hist2 = imhist(im2);
-            dist = sqrt(sum((hist1 - hist2).^2));
-            D(i, j) = dist;
-            D(j, i) = dist;
+            if i == j
+                D(i, j) = 0;
+                D(j, i) = 0;
+            else
+                im2 = imread(fullfile(curDir, [sprintf('%03d',j ) '.jpg']));
+                im2 = rgb2gray(im2);
+                hist2 = imhist(im2)./numel(im2);
+                dist = norm(hist1 - hist2);
+                D(i, j) = dist;
+                D(j, i) = dist;
+            end
         end
     end
+    
+    % Subsequence matching to preserve dynamics
 
 
 
