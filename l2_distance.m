@@ -21,7 +21,7 @@ function [D, D_prime, D_prime_prime] = l2_distance(name, m_weight, p, alpha)
     D_prime = zeros(num);
     D_prime_prime = zeros(num);
     
-    % Frame-to-frame distance calculation:
+    %% Frame-to-frame distance calculation
     % Convert to greyscale, find euclidean distance between histograms
     for i = 1:num
         im1 = imread(fullfile(curDir, [sprintf('%03d', i) '.jpg']));
@@ -42,18 +42,7 @@ function [D, D_prime, D_prime_prime] = l2_distance(name, m_weight, p, alpha)
         end    
     end
     
-    % Subsequence matching to preserve dynamics
-    
-%     pasc = pascal(m_weight * 2);
-%     w = zeros(1, m_weight * 2);
-%     for i=1:m_weight * 2
-%         for j = 1:m_weight * 2
-%             if i + j == 2 * m_weight + 1
-%                 w(i) = pasc(i,j);
-%             end
-%         end
-%     end
-    
+    %% Subsequence matching to preserve dynamics
     s = m_weight * 2;
     w = zeros(1, s);
     for i=1:s
@@ -80,33 +69,27 @@ function [D, D_prime, D_prime_prime] = l2_distance(name, m_weight, p, alpha)
         end
     end
     
-    %%%%%%%%%%%%%%%%%%%
+    %% Avoiding dead ends and anticipating the future
     D_prime_prime = D_prime;
     D_pp_prev = D_prime;
     
-    thresh = 1;
+    thresh = 0.001;
     diff = thresh;
     
-    %while diff >= thresh
-    for hi=1:10
+    while diff >= thresh
         for i=num:-1:1
             for j=1:num
+                mj = 1;
                 for k=1:num
-                    mj = 1;
                     if j ~= k && D_prime_prime(j,k) < mj
                         mj = D_prime_prime(j,k);
                     end
                 end
                D_prime_prime(i,j) = D_prime(i,j)^p + alpha * mj;
-            end
-            
+            end  
         end
-    
-        diff = sum(sum(D_prime_prime - D_pp_prev))
+        diff = sumabs(D_prime_prime - D_pp_prev);
         D_pp_prev = D_prime_prime;
-    end
-    
-    
-    
+    end    
 
 end
