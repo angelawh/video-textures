@@ -73,10 +73,12 @@ function [D, D_prime, D_prime_prime] = l2_distance(name, m_weight, p, alpha)
     D_prime_prime = D_prime;
     D_pp_prev = D_prime;
     
-    thresh = 0.001;
+    thresh = 0.01;
     diff = thresh;
-    
-    while diff >= thresh
+    diff_prev = thresh;
+    diff_same = 0;
+
+    while ~(diff < thresh && (diff_same >= 5 || diff_prev < diff))
         for i=num:-1:1
             for j=1:num
                 mj = 1;
@@ -89,6 +91,10 @@ function [D, D_prime, D_prime_prime] = l2_distance(name, m_weight, p, alpha)
             end  
         end
         diff = sumabs(D_prime_prime - D_pp_prev);
+        if abs(diff - diff_prev) < 0.0001
+            diff_same = diff_same + 1;
+        end
+        diff_prev = diff;
         D_pp_prev = D_prime_prime;
     end    
 
