@@ -80,5 +80,33 @@ function [D, D_prime, D_prime_prime] = l2_distance(name, m_weight, p, alpha)
         end
     end
     
+    %%%%%%%%%%%%%%%%%%%
+    D_prime_prime = D_prime;
+    D_pp_prev = D_prime;
+    
+    thresh = 1;
+    diff = thresh;
+    
+    %while diff >= thresh
+    for hi=1:10
+        for i=num:-1:1
+            for j=1:num
+                for k=1:num
+                    mj = 1;
+                    if j ~= k && D_prime_prime(j,k) < mj
+                        mj = D_prime_prime(j,k);
+                    end
+                end
+               D_prime_prime(i,j) = D_prime(i,j)^p + alpha * mj;
+            end
+            
+        end
+    
+        diff = sum(sum(D_prime_prime - D_pp_prev))
+        D_pp_prev = D_prime_prime;
+    end
+    
+    
+    
 
 end
