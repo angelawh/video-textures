@@ -5,5 +5,30 @@
 %   Returns a list of all transitions i -> j in order.
 
 function [ordered_transitions] = schedule_transitions(transitions)
-
+    % Sort the transitions
+    transitions = sortrows(transitions, 2);
+    transitions = sortrows(transitions, 1);
+    
+    ordered_transitions = transitions;
+    num_placed = 1;
+    
+    i = size(transitions, 1);
+    while i > 1
+        transition_beg = transitions(i,2);
+        ordered_transitions(num_placed, :) = transitions(i, :);
+        num_placed = num_placed + 1;
+        transitions(i, :) = [];
+        % Find the loop with overlapping range
+        j = i - 1;
+        while j >= 1 && transition_beg <= transitions(j,1)
+            j = j - 1;
+        end
+        i = j + 1; 
+    end
+    
+    for i = 1:size(transitions, 1)
+        % Add all to ordered_transitions
+        ordered_transitions(num_placed, :) = transitions(i, :);
+        num_placed = num_placed + 1;
+    end
 end
