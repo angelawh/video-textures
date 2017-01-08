@@ -38,8 +38,8 @@ function [transitions] = select_transitions(primitive_loops, length)
             best_other_loop = [0 0];
             lowest_cost = Inf;
             for r = i - 1:-1:1
-                other_r = length - r;
-                columns = loop_ranges{j};
+                other_r = i - r;
+                columns = [loop_ranges{j}, j];
                 for c = 1:size(columns, 2)
                     cost_other = loop_table(other_r, columns(c)).cost;
                     cost_prev = loop_table(r, j).cost;
@@ -70,9 +70,11 @@ function [transitions] = select_transitions(primitive_loops, length)
     other_loop = [0 0];
     lowest_cost = Inf;
     for col = 1:num_loops
-        if loop_table(length, col).cost < lowest_cost
-            prev_loop = loop_table(length, col).prev;
-            other_loop = loop_table(length, col).other;
+        loop_cell = loop_table(length, col);
+        if loop_cell.cost < lowest_cost
+            prev_loop = loop_cell.prev;
+            other_loop = loop_cell.other;
+            lowest_cost = loop_cell.cost;
         end
     end
     
@@ -84,13 +86,13 @@ end
 function [transitions] = get_transitions(prev, loop_table)
     % on tracing back afterwards, if cost ~= -1 and other is NaN then it is
     % the first one and the information can be found in prev
-    cell = loop_table(prev(1), prev(2));
+    loop_cell = loop_table(prev(1), prev(2));
     
-    if cell.cost ~= -1 && isnan(cell.other)
-        transitions = cell.prev;
+    if loop_cell.cost ~= -1 && isnan(loop_cell.other)
+        transitions = loop_cell.prev;
     else
-        transitions = [get_transitions(cell.prev, loop_table);...
-                       get_transitions(cell.other, loop_table)];
+        transitions = [get_transitions(loop_cell.prev, loop_table);...
+                       get_transitions(loop_cell.other, loop_table)];
     end
 end
 %on tracing back afterwards, if cost ~= -1 and other is NaN then it is the 
