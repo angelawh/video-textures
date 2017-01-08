@@ -12,6 +12,8 @@ function [ordered_transitions] = schedule_transitions(transitions)
     ordered_transitions = transitions;
     num_placed = 1;
     
+    % Schedule transitions by starting at the last transition and finding
+    % the earliest loop that overlaps with its range
     i = size(transitions, 1);
     while i > 1
         transition_beg = transitions(i,2);
@@ -26,9 +28,7 @@ function [ordered_transitions] = schedule_transitions(transitions)
         i = j + 1; 
     end
     
-    for i = 1:size(transitions, 1)
-        % Add all to ordered_transitions
-        ordered_transitions(num_placed, :) = transitions(i, :);
-        num_placed = num_placed + 1;
-    end
+    % Put all remaining transitions in list from top to bottom.
+    ordered_transitions(num_placed:size(ordered_transitions, 1), :) = ...
+        transitions;
 end
