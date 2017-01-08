@@ -96,6 +96,8 @@ function [D, D_prime, D_prime_prime] = l2_distance(name, m_weight, p, alpha)
         end
         diff_prev = diff;
         D_pp_prev = D_prime_prime;
-    end    
-
+    end
+    
+    % Change the directory back
+    cd('../..');
 end
