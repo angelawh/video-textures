@@ -10,15 +10,15 @@ function [ordered_transitions] = schedule_transitions(transitions)
     transitions = sortrows(transitions, 1);
     
     ordered_transitions = transitions;
-    num_placed = 1;
+    s = 1; % Keeps track of what index of transitions to insert
     
     % Schedule transitions by starting at the last transition and finding
     % the earliest loop that overlaps with its range
     i = size(transitions, 1);
     while i > 1
         transition_beg = transitions(i,2);
-        ordered_transitions(num_placed, :) = transitions(i, :);
-        num_placed = num_placed + 1;
+        ordered_transitions(s, :) = transitions(i, :);
+        s = s + 1;
         transitions(i, :) = [];
         % Find the loop with overlapping range
         j = i - 1;
@@ -29,6 +29,5 @@ function [ordered_transitions] = schedule_transitions(transitions)
     end
     
     % Put all remaining transitions in list from top to bottom.
-    ordered_transitions(num_placed:size(ordered_transitions, 1), :) = ...
-        transitions;
+    ordered_transitions(s:size(ordered_transitions, 1), :) = transitions;
 end
