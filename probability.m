@@ -19,4 +19,14 @@ function P = probability(D, sigma_multiplier)
     sigma = sigma_multiplier * sum / num_elements;
     
     P = exp(-D ./ sigma);
+    
+    % Normalize each row of P
+    for i = 1:size(P,1)
+        sum = 0;
+        for j = 1:size(P,1)
+            sum = sum + P(i,j);
+        end
+        P(i,:) = P(i,:) ./ sum;
+    end
+            
 end
