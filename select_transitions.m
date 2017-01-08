@@ -87,8 +87,7 @@ function [transitions] = get_transitions(prev, loop_table)
     % on tracing back afterwards, if cost ~= -1 and other is NaN then it is
     % the first one and the information can be found in prev
     loop_cell = loop_table(prev(1), prev(2));
-    
-    if loop_cell.cost ~= -1 && isnan(loop_cell.other)
+    if loop_cell.cost ~= -1 && isnan(loop_cell.other(1))
         transitions = loop_cell.prev;
     else
         transitions = [get_transitions(loop_cell.prev, loop_table);...
