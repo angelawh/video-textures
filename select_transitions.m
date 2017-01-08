@@ -7,15 +7,13 @@
 %   Returns a list of all transitions i -> j in order.
 
 function [transitions] = select_transitions(primitive_loops, length)
-    % Create 
     num_loops = size(primitive_loops, 1);
     
-    %Take primitive loops and get information about:
-    % Range=[i j], cost
+    % Take primitive loops and find information about which other loops it
+    % overlaps with (ranges of primitive loops overlap)
     primitive_loops = sortrows(primitive_loops, 2);
     primitive_loops = sortrows(primitive_loops, 1);
     
-    % Num_loops x 1 column vector
     loop_ranges = cell(num_loops, 1);
     for i = num_loops:-1:1
         j = i - 1;
@@ -28,10 +26,14 @@ function [transitions] = select_transitions(primitive_loops, length)
         end
     end
     
-    % Initialize struct array
+    % Initialize struct array. Prev and other are pointers cells of
+    % the two compound loops that will be combined.
     loop_table = repmat(struct('prev', NaN, 'other', NaN, 'cost', -1), ...
         length, num_loops);
     
+    % For each cell starting from the top row, find the combination of
+    % compound loops before it with equal the length of the current row
+    % and have the smallest cost
     for i = 1:length
         for j = 1:num_loops
             best_primitive_loop = [0 0];
@@ -43,7 +45,7 @@ function [transitions] = select_transitions(primitive_loops, length)
                 for c = 1:size(columns, 2)
                     cost_other = loop_table(other_r, columns(c)).cost;
                     cost_prev = loop_table(r, j).cost;
-                    if cost_other >= 0 && cost_prev > 0 && ...
+                    if cost_other >= 0 && cost_prev >= 0 && ...
                             cost_other + cost_prev < lowest_cost
                         lowest_cost = cost_other + cost_prev;
                         best_primitive_loop = [r j];
@@ -51,6 +53,7 @@ function [transitions] = select_transitions(primitive_loops, length)
                     end
                 end
             end
+            % If found a valid compound loop
             if lowest_cost ~= Inf
                 loop_table(i, j).cost = lowest_cost;
                 loop_table(i, j).prev = best_primitive_loop;
@@ -66,26 +69,24 @@ function [transitions] = select_transitions(primitive_loops, length)
     end
     
     % Find lowest cost entry
-    prev_loop = [0 0];
-    other_loop = [0 0];
+    best_col = 0;
     lowest_cost = Inf;
     for col = 1:num_loops
         loop_cell = loop_table(length, col);
         if loop_cell.cost < lowest_cost
-            prev_loop = loop_cell.prev;
-            other_loop = loop_cell.other;
+            best_col = col;
             lowest_cost = loop_cell.cost;
         end
     end
     
     % Trace back to get lowest cost combination of loops
-    transitions = get_transitions(prev_loop, loop_table);
-    transitions = [transitions; get_transitions(other_loop, loop_table)];
+    transitions = get_transitions([length, best_col], loop_table);
 end
 
 function [transitions] = get_transitions(prev, loop_table)
-    % on tracing back afterwards, if cost ~= -1 and other is NaN then it is
-    % the first one and the information can be found in prev
+    % If cost ~= -1 and other is NaN then it is 
+    % the first one and the information of the actual column's transition
+    % can be found in the prev
     loop_cell = loop_table(prev(1), prev(2));
     if loop_cell.cost ~= -1 && isnan(loop_cell.other(1))
         transitions = loop_cell.prev;
@@ -94,11 +95,3 @@ function [transitions] = get_transitions(prev, loop_table)
                        get_transitions(loop_cell.other, loop_table)];
     end
 end
-%on tracing back afterwards, if cost ~= -1 and other is NaN then it is the 
-% first one and the information can be found in prev
-% 
-
-%loop_table(i,j).prev = [i,j] location of where the prev is from
-%loop_table(i,j).other = 
-%loop_table(i,j).cost = 
-%struct('prev',NaN,'other',NaN,'cost',-1)
