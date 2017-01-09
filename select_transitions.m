@@ -73,7 +73,7 @@ function [transitions] = select_transitions(primitive_loops, length)
     lowest_cost = Inf;
     for col = 1:num_loops
         loop_cell = loop_table(length, col);
-        if loop_cell.cost < lowest_cost
+        if loop_cell.cost > 0 && loop_cell.cost < lowest_cost
             best_col = col;
             lowest_cost = loop_cell.cost;
         end
