@@ -6,9 +6,12 @@
 %   m_weight - dynamics kernel weight. Should be 1 or 2
 %   p - some transition something
 %   alpha - related to future cost
+%   pp_thresh - the threshold for D'' that determines when to stop
+%    iterating/when the matrix indices have stabilized
 %   Each return value is a num_images X num_images matrix
 
-function [D, D_prime, D_prime_prime] = l2_distance(name, m_weight, p, alpha)
+function [D, D_prime, D_prime_prime] = l2_distance(name, m_weight, p, ...
+                                                   alpha, pp_thresh)
     cd(fullfile('./images/', name));
     curDir = pwd();
     
@@ -73,15 +76,13 @@ function [D, D_prime, D_prime_prime] = l2_distance(name, m_weight, p, alpha)
     D_prime_prime = D_prime;
     D_pp_prev = D_prime;
     
-    thresh = 0.01;
-    diff = thresh;
-    diff_prev = thresh;
-    diff_same = 0;
+    diff = pp_thresh;
+    diff_prev = pp_thresh;
 
-    while ~(diff < thresh && (diff_same >= 5 || diff_prev < diff))
+    while diff >= pp_thresh && diff_prev >= diff
         for i=num:-1:1
             for j=1:num
-                mj = 1;
+                mj = Inf;
                 for k=1:num
                     if j ~= k && D_prime_prime(j,k) < mj
                         mj = D_prime_prime(j,k);
@@ -91,9 +92,6 @@ function [D, D_prime, D_prime_prime] = l2_distance(name, m_weight, p, alpha)
             end  
         end
         diff = sumabs(D_prime_prime - D_pp_prev);
-        if abs(diff - diff_prev) < 0.0001
-            diff_same = diff_same + 1;
-        end
         diff_prev = diff;
         D_pp_prev = D_prime_prime;
     end
