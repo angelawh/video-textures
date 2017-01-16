@@ -8,37 +8,28 @@ function D = hsv_l2_distance(images)
     num = size(images, 1);
     
     D = zeros(num);
-    [h,w] = size(images{1}(:,:,1));
     
     hsv_images = images;
-    
-    for i = 1:num
-        hsv_images{i} = rgb2hsv(images{i});
-    end 
     
     % Frame-to-frame distance calculation
     % Convert to greyscale, find euclidean distance between histograms
     for i = 1:num
+        if i == 1
+            hsv_images{i} = rgb2hsv(images{i});
+        end
         im1 = hsv_images{i};
         for j = i:num
             if i == j
                 D(i, j) = 0;
                 D(j, i) = 0;
             else
-                im2 = hsv_images{j};
-                sum_h = 0;
-                sum_s = 0;
-                sum_v = 0;
-                
-                for r = 1:h
-                    for c = 1:w
-                        sum_h = sum_h + (im1(r, c, 1) - im2(r, c, 1))^2;
-                        sum_s = sum_s + (im1(r, c, 2) - im2(r, c, 2))^2;
-                        sum_v = sum_v + (im1(r, c, 3) - im2(r, c, 3))^2;
-                    end
+                if i == 1
+                    hsv_images{j} = rgb2hsv(images{j});
                 end
-                % Can try weighting them differently if desired
-                dist = sqrt(sum_h + sum_s + sum_v);
+                im2 = hsv_images{j};
+                dist = sqrt(sum(sum((im1(:,:,1) - im2(:,:,1)).^2)) + ...
+                            sum(sum((im1(:,:,2) - im2(:,:,2)).^2)) + ...
+                            sum(sum((im1(:,:,3) - im2(:,:,3)).^2)));
                 D(i, j) = dist;
                 D(j, i) = dist;
             end
