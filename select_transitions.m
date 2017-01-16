@@ -2,11 +2,11 @@
 % select_transitions.m
 %   Select which set of transitions will be used.
 %   Takes in a set of all transitions (primitive loops) to be used and 
-%   length of loop to schedule (in number of seconds).
+%   length of loop to schedule (in number of frames).
 %   Primitive loops in the structure of [i j cost] where i >= j.
 %   Returns a list of all transitions i -> j in order.
 
-function [transitions] = select_transitions(primitive_loops, length)
+function transitions = select_transitions(primitive_loops, length)
     num_loops = size(primitive_loops, 1);
     
     % Take primitive loops and find information about which other loops it

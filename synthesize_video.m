@@ -3,26 +3,17 @@
 %   Takes the name of a folder and loop 
 %   transitions and synthesizes them into a video.
 
-function synthesize_video(name, transitions, video_name)
-    cd(fullfile('./images/', name));
-    imDir = pwd();
-    files = dir(imDir);
-    num = size(files);
-    num = num(1) - 2;
+function synthesize_video(images, transitions, old_vid_name, video_name)
+   
+    num = size(images,1);
     
-    cd('../../textures');
+    cd('./textures');
     vidDir = pwd();
     
     cd('../videos');
-    old_vid = VideoReader([name '.mp4']);
+    old_vid = VideoReader([old_vid_name '.mp4']);
     
     cd('..');
-    
-    images = cell(num, 1);
-    for i = 1:num
-        img = imread(fullfile(imDir,[sprintf('%03d', i) '.jpg']));
-        images{i} = img;
-    end
                    
 	video = VideoWriter(fullfile(vidDir, [video_name '.avi']));
     video.FrameRate = old_vid.FrameRate;

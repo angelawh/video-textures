@@ -30,5 +30,5 @@ function images = read_images(name, start, finish)
     end
     
     % Change the directory back
-    cd('..');
+    cd('../..');
 end

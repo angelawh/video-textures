@@ -1,4 +1,3 @@
-
 %
 % l2_distance.m
 %   Creates prime distance matrices between pairs of images from D matrix.
@@ -21,6 +20,8 @@ function [D_prime, D_prime_prime] = prime_distance(D, m_weight, p, ...
     
     w = w./ sum(w);
     
+    num = size(D, 1);
+    
     for i = 1:num
         for j = 1:num
             sum_weights = 0;
@@ -41,26 +42,26 @@ function [D_prime, D_prime_prime] = prime_distance(D, m_weight, p, ...
     
     %% Avoiding dead ends and anticipating the future
     D_prime_prime = D_prime;
-    D_pp_prev = D_prime;
-    
-    diff = pp_thresh;
-    diff_prev = pp_thresh;
-
-    while diff >= pp_thresh && diff_prev >= diff
-        for i=num:-1:1
-            for j=1:num
-                mj = Inf;
-                for k=1:num
-                    if j ~= k && D_prime_prime(j,k) < mj
-                        mj = D_prime_prime(j,k);
-                    end
-                end
-               D_prime_prime(i,j) = D_prime(i,j)^p + alpha * mj;
-            end  
-        end
-        diff = sumabs(D_prime_prime - D_pp_prev);
-        diff_prev = diff;
-        D_pp_prev = D_prime_prime;
-    end
+%     D_pp_prev = D_prime;
+%     
+%     diff = pp_thresh;
+%     diff_prev = pp_thresh;
+% 
+%     while diff >= pp_thresh && diff_prev >= diff
+%         for i=num:-1:1
+%             for j=1:num
+%                 mj = Inf;
+%                 for k=1:num
+%                     if j ~= k && D_prime_prime(j,k) < mj
+%                         mj = D_prime_prime(j,k);
+%                     end
+%                 end
+%                D_prime_prime(i,j) = D_prime(i,j)^p + alpha * mj;
+%             end  
+%         end
+%         diff = sumabs(D_prime_prime - D_pp_prev)
+%         diff_prev = diff;
+%         D_pp_prev = D_prime_prime;
+%     end
 
 end

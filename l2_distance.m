@@ -6,13 +6,7 @@
 %   Return value is a num_images X num_images matrix
 
 function D = l2_distance(ims)
-    cd(fullfile('./images/', name));
-    curDir = pwd();
-    
-    % Count number of images
-    files = dir(curDir);
-    num = size(files);
-    num = num(1) - 2;
+    num = size(ims,1);
     
     D = zeros(num);
     D_prime = zeros(num);
@@ -39,7 +33,4 @@ function D = l2_distance(ims)
         end
         i
     end  
-    
-    %% Change the directory back
-    cd('../..');
 end

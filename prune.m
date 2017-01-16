@@ -17,7 +17,7 @@
 %   Returns transitions, a set of the transitions to consider, structured
 %    [row, col, cost].
 
-function [transitions] = prune(D_dist, D_cost, local_size, cost_thresh, ...
+function primitive_loops = prune(D_dist, D_cost, local_size, cost_thresh, ...
                                num_transitions, P_prime_prime, p_thresh)
     % Prune all transitions that are not local minima in the distance 
     % matrix
@@ -81,5 +81,5 @@ function [transitions] = prune(D_dist, D_cost, local_size, cost_thresh, ...
     
     % Take only the top num_transitions of them sorted by cost
     num_return = min(num_transitions, size(minima, 1));
-    transitions = minima(1:num_return, :);
+    primitive_loops = minima(1:num_return, :);
 end
