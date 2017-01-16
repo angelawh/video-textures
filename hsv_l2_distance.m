@@ -10,16 +10,22 @@ function D = hsv_l2_distance(images)
     D = zeros(num);
     [h,w] = size(images{1}(:,:,1));
     
+    hsv_images = images;
+    
+    for i = 1:num
+        hsv_images{i} = rgb2hsv(images{i});
+    end 
+    
     % Frame-to-frame distance calculation
     % Convert to greyscale, find euclidean distance between histograms
     for i = 1:num
-        im1 = rgb2hsv(images{i});
+        im1 = hsv_images{i};
         for j = i:num
             if i == j
                 D(i, j) = 0;
                 D(j, i) = 0;
             else
-                im2 = rgb2hsv(images{j});
+                im2 = hsv_images{j};
                 sum_h = 0;
                 sum_s = 0;
                 sum_v = 0;
@@ -36,5 +42,6 @@ function D = hsv_l2_distance(images)
                 D(i, j) = dist;
                 D(j, i) = dist;
             end
-        end    
+        end
     end
+end
