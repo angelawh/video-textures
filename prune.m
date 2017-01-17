@@ -71,11 +71,11 @@ function primitive_loops = prune(D_dist, D_cost, local_size, cost_thresh, ...
     end
     
     % Prune transitions to first frame
-    for i = size(minima,1):-1:1
-        if minima(i,2) <= 20;
-            minima(i, :) = [];
-        end
-	end
+%     for i = size(minima,1):-1:1
+%         if minima(i,2) <= 20;
+%             minima(i, :) = [];
+%         end
+% 	end
     
     % Prune by P'' if parameters given
     if nargin > 5

@@ -14,6 +14,7 @@ function D = hsv_l2_distance(images)
     % Frame-to-frame distance calculation
     % Convert to greyscale, find euclidean distance between histograms
     for i = 1:num
+        i
         if i == 1
             hsv_images{i} = rgb2hsv(images{i});
         end

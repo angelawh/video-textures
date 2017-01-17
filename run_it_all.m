@@ -1,7 +1,7 @@
 %run_it_all.m
 
 function run_it_all(name, video_name, resize, m_weight, local_size, ...
-                    cost_thresh, num_transitions, length)
+                    cost_thresh, num_transitions, length, fade_l)
 
     
 
@@ -10,6 +10,8 @@ function run_it_all(name, video_name, resize, m_weight, local_size, ...
     D = hsv_l2_distance(resized_images);
     %or
     %D = l2_distance(ims);
+    %or
+    %D = im_euclid_distance(ims);
     
     D_prime = prime_distance(D, m_weight, NaN, NaN, NaN);
     
@@ -20,7 +22,8 @@ function run_it_all(name, video_name, resize, m_weight, local_size, ...
     
     ordered_transitions = schedule_transitions(transitions);
     
-    synthesize_video(resized_images, ordered_transitions, name, video_name);
+    synthesize_video(resized_images, ordered_transitions, name, ...
+                                video_name, false, fade_l);
 
 
 
