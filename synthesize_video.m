@@ -36,7 +36,7 @@ function synthesize_video(images, transitions, old_vid_name, video_name,...
     t_num = 1; % Transition number we're on
     while i <= num
         
-        if crossfade && t_num <= size(transitions, 1)
+        if crossfade && t_num-1 <= size(transitions, 1)
             crossfade_frame(images, i, t_num, transitions, fade_l, ...
                                             fade_distribution, video);
         else
@@ -58,40 +58,38 @@ function crossfade_frame(images, i, t_num, transitions, fade_l, ...
                                         fade_distribution, video)
     num = size(images,1);
 
-%     if t_num - 1 > 0 && i < transitions(t_num,1) - fade_l && ...
-%                     i < transitions(t_num-1,2) + fade_l
-%                 
-%         fade_distribution(index)
-%         	im1 = images{dest} * fade_distribution(index);
-%           	im2 = images{i} * (1 - fade_distribution(index));
-%           	writeIm = im1 + im2;
-%           	writeVideo(video, writeIm);  
-%     end
-%     
-%     if i == 129 || i == 1 || i == 2
-%         i
-%         t_num
-%         t
-%         
-%     end
     
-    if t <= size(transitions, 1) && (i >= transitions(t,1) ...
-                - fade_l) && (i <= transitions(t,1) +fade_l)
+    
+    
+    if t_num <= size(transitions, 1) && ...
+                            (i >= transitions(t_num,1) - fade_l)
             
-        offset = transitions(t,1) - i;
+        offset = transitions(t_num,1) - i;
      	index = fade_l - offset + 1;       
 
-     	dest = transitions(t,2) - offset;
+     	dest = transitions(t_num,2) - offset;
 
        	if dest < 1 || dest > num
             writeVideo(video, images{i});  
         else
-            fade_distribution(index)
         	im1 = images{dest} * fade_distribution(index);
           	im2 = images{i} * (1 - fade_distribution(index));
           	writeIm = im1 + im2;
           	writeVideo(video, writeIm);  
-        end   
+        end
+    elseif t_num - 1 > 0 && i < transitions(t_num-1,2) + fade_l
+        offset = i - transitions(t_num-1,2) + 1;
+        index = fade_l + offset + 1;
+        dest = transitions(t_num-1,1) + offset;
+        
+        if dest < 1 || dest > num
+            writeVideo(video, images{i});  
+        else
+            im1 = images{dest} * (1 - fade_distribution(index));
+            im2 = images{i} * fade_distribution(index);
+            writeIm = im1 + im2;
+            writeVideo(video, writeIm);  
+        end  
     else
       	writeVideo(video, images{i});
   	end
