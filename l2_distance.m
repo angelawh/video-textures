@@ -15,6 +15,7 @@ function D = l2_distance(ims)
     %% Frame-to-frame distance calculation
     % Convert to greyscale, find euclidean distance between histograms
     for i = 1:num
+        i
         im1 = ims{i};
         im1 = rgb2gray(im1);
         hist1 = imhist(im1)./numel(im1);

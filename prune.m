@@ -70,9 +70,9 @@ function primitive_loops = prune(D_dist, D_cost, local_size, cost_thresh, ...
         i = i - 1;
     end
     
-    % Prune transitions to first frame
+    % Prune transition if destination frame is too early
     for i = size(minima,1):-1:1
-        if minima(i,2) <= 10;
+        if minima(i,2) <= 2;
             minima(i, :) = [];
         end
     end
